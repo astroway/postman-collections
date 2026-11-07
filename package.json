@@ -1,0 +1,14 @@
+{
+  "name": "astroway-postman-collections",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Postman collection for the AstroWay API, regenerated from the live OpenAPI document.",
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "build": "node scripts/build.mjs"
+  },
+  "dependencies": {
+    "openapi-to-postmanv2": "6.0.1"
+  }
+}

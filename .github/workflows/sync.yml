@@ -1,0 +1,38 @@
+name: Sync from OpenAPI
+
+on:
+  schedule:
+    - cron: '17 4 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Commit when the collection changed
+        run: |
+          if git diff --quiet -- astroway-api.postman_collection.json stats.json; then
+            echo "No change"
+            exit 0
+          fi
+          version=$(node -p "require('./stats.json').apiVersion")
+          git config user.name "AstroWay Team"
+          git config user.email "astroway.info@gmail.com"
+          git add astroway-api.postman_collection.json stats.json
+          git commit -m "chore: sync with API ${version}"
+          git push
